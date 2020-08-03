@@ -1,0 +1,71 @@
+---
+title: "Lab 6: 12 Days of Christmas"
+author: Haley Beahm
+date: 8/2/2020
+output:
+  html_document:
+    theme: dark
+---
+
+```{r Setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(glue)
+library(twelvedays)
+```
+
+<br>
+
+### **GitHub Repository**
+Here is a link to my [GitHub repository](https://github.com/hrbeahm/12_Days_of_Christmas.git)!
+
+<br>
+
+### **Xmas2 Song**
+```{r Xmas 2 Data, include=FALSE}
+xmas2 <- read.csv("https://www.dropbox.com/s/ap2hqssese1ki4j/xmas_2.csv?dl=1")
+```
+
+
+```{r Import Functions, include=FALSE}
+source("pluralize_gift.R")
+source("make_phrase.R")
+source("sing_day.R")
+```
+
+
+```{r Num Words}
+xmas2 <- xmas2 %>% 
+  mutate(
+    Num.Words = case_when(
+      Day == 1 ~ "an",
+      Day == 2 ~ "two",
+      Day == 3 ~ "three",
+      Day == 4 ~ "four",
+      Day == 5 ~ "five",
+      Day == 6 ~ "six",
+      Day == 7 ~ "seven",
+      Day == 8 ~ "eight",
+      Day == 9 ~ "nine",
+      Day == 10 ~ "ten",
+      Day == 11 ~ "eleven",
+      Day == 12 ~ "twelve"
+    )
+)
+```
+
+
+```{r Pluralize & Make Phrases}
+xmas2 <- xmas2 %>%
+  mutate(
+    Plural.Gift = pluralize_gift(Gift.Item, Day),
+    Full.Phrase = make_phrase(Day, Num.Words, Plural.Gift, Verb, Adjective, Location)
+  )
+```
+
+
+```{r 12 Days of Christmas -- Song}
+map2_chr(1:12, xmas2$Day.in.Words, ~sing_day(xmas2, .x, .y, Full.Phrase))
+```
+```
+
